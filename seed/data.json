@@ -1,0 +1,54 @@
+{
+  "_note": "Datos iniciales tomados de la página original. Se cargan solo la primera vez, cuando la base de datos está vacía. Las descripciones son textos de ejemplo para editar desde /admin.",
+  "categories": [
+    { "slug": "electroterapia", "name": "Electroterapia", "image": "electro-tens-ems.jpg", "tags": ["Fisioterapeutas", "Droguerías"], "description": "Electroestimuladores TENS y EMS para el alivio del dolor y el fortalecimiento muscular." },
+    { "slug": "equipos-profesionales", "name": "Equipos profesionales", "image": "stim-combo.jpg", "tags": ["Consultorios", "IPS"], "description": "Ultrasonido, electroestimulación y camillas para consultorios, IPS y clínicas." },
+    { "slug": "masaje", "name": "Masaje", "image": "pistola-ws062.jpg", "tags": ["Deportistas", "Regalos"], "description": "Pistolas y masajeadores de alta rotación." },
+    { "slug": "recuperacion", "name": "Recuperación", "image": "botas-presoterapia.jpg", "tags": ["Clubes", "Gimnasios"], "description": "Presoterapia, crioterapia, bañeras de hielo y termoterapia." },
+    { "slug": "rehabilitacion", "name": "Rehabilitación", "image": "pedal-electrico.jpg", "tags": ["Adulto mayor", "Casa"], "description": "Equipos para movilidad, ejercicio pasivo y evaluación." },
+    { "slug": "terapia-de-mano", "name": "Terapia de mano", "image": "plastilina.jpg", "tags": ["Terapia ocupacional"], "description": "Elementos para fuerza, sensibilidad y movilidad de mano." },
+    { "slug": "fitness-y-yoga", "name": "Fitness y yoga", "image": "bosu.jpg", "tags": ["Gimnasios", "Pilates"], "description": "Accesorios para entrenamiento funcional, pilates y yoga." },
+    { "slug": "consumibles", "name": "Consumibles", "image": "electrodos.jpg", "tags": ["Todos tus clientes"], "flag": "Recompra", "description": "Productos de recompra mensual para todos tus clientes." }
+  ],
+  "products": [
+    { "slug": "electroestimulador-tens-ems", "name": "Electroestimulador TENS + EMS", "category": "electroterapia", "image": "electro-tens-ems.jpg", "badge": "INVIMA", "featured": true, "summary": "TENS, EMS y masaje en un solo equipo portátil." },
+    { "slug": "perfect-pfe", "name": "Perfect PFE", "category": "electroterapia", "image": "perfect-pfe.jpg", "brand": "TensCare", "summary": "Ejercitador de suelo pélvico con electroestimulación." },
+    { "slug": "ultrasonido-portatil", "name": "Ultrasonido portátil", "category": "electroterapia", "image": "ultrasonido-portatil.jpg", "summary": "Ultrasonido terapéutico compacto para uso en casa." },
+
+    { "slug": "stim-combo", "name": "US Stim Combo", "category": "equipos-profesionales", "image": "stim-combo.jpg", "brand": "Nu-Tek", "badge": "2 en 1", "featured": true, "summary": "Ultrasonido y electroestimulación en un solo equipo profesional." },
+    { "slug": "e-stim-basic", "name": "E-Stim Basic", "category": "equipos-profesionales", "image": "stim-basic.jpg", "brand": "Nu-Tek", "summary": "Electroestimulador profesional de cuatro canales." },
+    { "slug": "sonic-stim-pro", "name": "Sonic Stim Pro", "category": "equipos-profesionales", "image": "sonic-stim-pro.jpg", "brand": "Nu-Tek", "summary": "Combinado de ultrasonido y electroterapia para consultorio." },
+    { "slug": "ultrasonido-us1000", "name": "Ultrasonido US-1000", "category": "equipos-profesionales", "image": "ultrasonido-us1000.jpg", "summary": "Ultrasonido terapéutico de uso profesional." },
+    { "slug": "camilla-masaje", "name": "Camilla de masaje plegable", "category": "equipos-profesionales", "image": "camilla-masaje.jpg", "summary": "Camilla portátil en madera con estuche de transporte." },
+    { "slug": "camilla-quiropractica", "name": "Camilla quiropráctica", "category": "equipos-profesionales", "image": "camilla-quiro.jpg", "summary": "Camilla de secciones para quiropraxia y terapia manual." },
+
+    { "slug": "pistola-ws-062", "name": "Pistola de masajes WS-062", "category": "masaje", "image": "pistola-ws062.jpg", "badge": "5 cabezales", "featured": true, "summary": "Pistola de percusión con cinco cabezales intercambiables." },
+    { "slug": "masajeador-7-en-1", "name": "Masajeador 7 en 1", "category": "masaje", "image": "masajeador-7en1.jpg", "summary": "Masajeador corporal con siete cabezales." },
+    { "slug": "masajeador-de-ojos", "name": "Masajeador de ojos", "category": "masaje", "image": "masajeador-ojos.jpg", "summary": "Antifaz de masaje con calor para descanso visual." },
+    { "slug": "bola-vibrante", "name": "Bola vibrante doble", "category": "masaje", "image": "bola-vibrante.jpg", "summary": "Bola de masaje con vibración para liberación miofascial." },
+
+    { "slug": "botas-presoterapia", "name": "Botas de presoterapia inalámbricas", "category": "recuperacion", "image": "botas-presoterapia.jpg", "badge": "Nuevo 2026", "featured": true, "summary": "Compresión neumática secuencial sin cables." },
+    { "slug": "cryo-push", "name": "Cryo Push", "category": "recuperacion", "image": "cryo-push.jpg", "summary": "Equipo de crioterapia para recuperación muscular." },
+    { "slug": "banera-de-hielo", "name": "Bañera de hielo portátil", "category": "recuperacion", "image": "banera-hielo.jpg", "summary": "Bañera plegable para inmersión en frío." },
+    { "slug": "compresa-tobillo", "name": "Compresa para tobillo", "category": "recuperacion", "image": "compresa-tobillo.jpg", "summary": "Compresa frío/calor con ajuste para tobillo y pie." },
+    { "slug": "tanque-de-parafina", "name": "Tanque de parafina", "category": "recuperacion", "image": "tanque-parafina.jpg", "summary": "Calentador de parafina para termoterapia de manos y pies." },
+
+    { "slug": "pedal-electrico", "name": "Pedal eléctrico", "category": "rehabilitacion", "image": "pedal-electrico.jpg", "summary": "Pedalera motorizada para ejercicio pasivo y activo." },
+    { "slug": "mini-eliptica", "name": "Mini elíptica", "category": "rehabilitacion", "image": "mini-eliptica.jpg", "summary": "Elíptica compacta para ejercicio sentado." },
+    { "slug": "barras-paralelas", "name": "Barras paralelas", "category": "rehabilitacion", "image": "barras-paralelas.jpg", "summary": "Barras para reeducación de marcha." },
+    { "slug": "traccion-cervical", "name": "Tracción cervical inflable", "category": "rehabilitacion", "image": "traccion-cervical.jpg", "summary": "Collar inflable para descompresión cervical." },
+    { "slug": "inclinometro", "name": "Inclinómetro", "category": "rehabilitacion", "image": "inclinometro.jpg", "brand": "Baseline", "summary": "Instrumento para medir rangos de movimiento." },
+
+    { "slug": "plastilina-terapeutica", "name": "Plastilina terapéutica", "category": "terapia-de-mano", "image": "plastilina.jpg", "summary": "Masilla en varias resistencias para fortalecer la mano." },
+    { "slug": "compresa-guantes", "name": "Guantes compresa frío/calor", "category": "terapia-de-mano", "image": "compresa-guantes.jpg", "summary": "Guantes de gel para termoterapia de manos." },
+    { "slug": "pelotas-con-puyas", "name": "Pelotas con puyas", "category": "terapia-de-mano", "image": "pelotas-puyas.jpg", "summary": "Pelotas sensoriales para estimulación y masaje." },
+
+    { "slug": "bosu", "name": "Bosu de equilibrio", "category": "fitness-y-yoga", "image": "bosu.jpg", "summary": "Media esfera con bandas para equilibrio y fuerza." },
+    { "slug": "tapete-de-yoga", "name": "Tapete de yoga", "category": "fitness-y-yoga", "image": "tapete-yoga.jpg", "summary": "Tapete antideslizante con correa de transporte." },
+    { "slug": "kit-tubbing", "name": "Kit de tubbing", "category": "fitness-y-yoga", "image": "kit-tubbing.jpg", "summary": "Bandas de resistencia con agarres y anclajes." },
+
+    { "slug": "electrodos", "name": "Electrodos autoadhesivos", "category": "consumibles", "image": "electrodos.jpg", "badge": "Recompra", "summary": "Electrodos reutilizables para equipos TENS y EMS." },
+    { "slug": "kinesio-tape", "name": "Kinesio tape", "category": "consumibles", "image": "kinesio-tape.jpg", "summary": "Cinta kinesiológica en varios colores." },
+    { "slug": "agujas-agupunt", "name": "Agujas de acupuntura", "category": "consumibles", "image": "agujas.jpg", "brand": "Agupunt", "summary": "Agujas estériles de un solo uso." }
+  ]
+}
