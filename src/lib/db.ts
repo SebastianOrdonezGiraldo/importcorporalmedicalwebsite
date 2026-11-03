@@ -1,5 +1,5 @@
 import "server-only";
-import Database from "better-sqlite3";
+import { DatabaseSync } from "node:sqlite";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -77,18 +77,18 @@ const PRODUCT_COLS = `p.id, p.slug, p.name, p.category_id AS categoryId, p.summa
   p.image, p.featured, p.visible, p.sort_order AS sortOrder, p.created_at AS createdAt, p.updated_at AS updatedAt`;
 const CATEGORY_COLS = `id, slug, name, description, tags, flag, image, sort_order AS sortOrder, visible`;
 
-function open(): Database.Database {
+// Uses Node's built-in SQLite (node:sqlite, Node 22.13+): no native module to compile on install.
+function open(): DatabaseSync {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-  const db = new Database(path.join(DATA_DIR, "app.db"));
-  db.pragma("journal_mode = WAL");
-  db.pragma("foreign_keys = ON");
+  const db = new DatabaseSync(path.join(DATA_DIR, "app.db"));
+  db.exec("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;");
   db.exec(SCHEMA);
   seedIfEmpty(db);
   return db;
 }
 
 /** First run only: load the catalog that was on the original single-file page. */
-function seedIfEmpty(db: Database.Database) {
+function seedIfEmpty(db: DatabaseSync) {
   const { n } = db.prepare("SELECT COUNT(*) AS n FROM categories").get() as { n: number };
   if (n > 0) return;
   const seedDir = path.join(process.cwd(), "seed");
@@ -110,7 +110,8 @@ function seedIfEmpty(db: Database.Database) {
     `INSERT INTO products (slug, name, category_id, summary, brand, badge, image, featured, sort_order)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   );
-  db.transaction(() => {
+  db.exec("BEGIN");
+  try {
     const ids = new Map<string, number>();
     data.categories.forEach((c, i) => {
       const r = insCat.run(c.slug, c.name, c.description ?? "", JSON.stringify(c.tags), c.flag ?? null, copy(c.image), i);
@@ -120,11 +121,15 @@ function seedIfEmpty(db: Database.Database) {
       insProd.run(p.slug, p.name, ids.get(p.category) ?? null, p.summary ?? "", p.brand ?? null, p.badge ?? null,
         copy(p.image), p.featured ? 1 : 0, i);
     });
-  })();
+    db.exec("COMMIT");
+  } catch (e) {
+    db.exec("ROLLBACK");
+    throw e;
+  }
 }
 
-const g = globalThis as unknown as { __icmDb?: Database.Database };
-export function db(): Database.Database {
+const g = globalThis as unknown as { __icmDb?: DatabaseSync };
+export function db(): DatabaseSync {
   if (!g.__icmDb) g.__icmDb = open();
   return g.__icmDb;
 }

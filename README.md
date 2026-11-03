@@ -15,17 +15,18 @@ Página principal de Import Corporal Medical S.A.S con catálogo informativo de 
 ## Tecnología
 
 - **Next.js 16** (App Router) + **React 19** + **TypeScript**.
-- **SQLite** (`better-sqlite3`): un solo archivo `data/app.db`, sin servidor de base de datos.
+- **SQLite** integrado en Node (`node:sqlite`): un solo archivo `data/app.db`, sin servidor de base de datos ni módulos que compilar. Al arrancar, Node muestra un aviso "ExperimentalWarning: SQLite"; es normal.
 - **sharp**: las fotos subidas se redimensionan a máx. 1200 px y se guardan en WebP en `data/uploads/`.
 - CSS propio (el de la página original, sin frameworks).
 
 ## Empezar en tu computador
 
-Requisitos: Node.js 22 o superior.
+Requisitos: Node.js 22.13 o superior (recomendado Node 24 LTS). No hace falta Visual Studio ni compiladores.
 
 ```bash
 npm install
-cp .env.example .env.local     # luego edita ADMIN_PASSWORD y SESSION_SECRET
+cp .env.example .env.local     # en Windows: copy .env.example .env.local
+                               # luego edita ADMIN_PASSWORD y SESSION_SECRET
 npm run dev
 ```
 

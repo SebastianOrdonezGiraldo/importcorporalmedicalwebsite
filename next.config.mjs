@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Native modules must not be bundled.
-  serverExternalPackages: ["better-sqlite3", "sharp"],
+  serverExternalPackages: ["sharp"],
   experimental: {
     serverActions: {
       // Product photos are uploaded through Server Actions (limit in src/lib/uploads.ts is 6 MB).
