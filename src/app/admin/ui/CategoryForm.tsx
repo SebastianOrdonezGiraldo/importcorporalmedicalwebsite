@@ -32,9 +32,11 @@ export default function CategoryForm({ category: c }: { category: (Category & { 
         <div className="adm-col">
           <ImageField current={c?.imageUrl ?? null} label="Imagen de portada" />
           <label className="adm-field"><span>Enlace (slug)</span>
-            <input name="slug" maxLength={80} defaultValue={c?.slug} placeholder="Se genera del nombre" />
+            <input name="slug" maxLength={80} defaultValue={c?.slug} placeholder={c ? "Vacío: conservar enlace actual" : "Se genera del nombre"} />
+            <small>{c ? "Si lo cambias, los enlaces anteriores redirigirán al nuevo. Las direcciones antiguas quedan reservadas." : "Al crear la línea se genera del nombre si lo dejas vacío."}</small>
           </label>
           <label className="adm-check"><input type="checkbox" name="visible" defaultChecked={c?.visible ?? true} /> Visible en el sitio</label>
+          <small className="adm-muted">Al mostrar la línea también se publican sus productos activos. Al ocultarla, todos sus productos dejan de publicarse.</small>
         </div>
       </div>
       {state?.error && <p className="adm-alert err" role="alert">{state.error}</p>}

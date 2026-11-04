@@ -2,5 +2,13 @@ node_modules
 .next
 data
 .env*
+**/.env*
 !.env.example
 .git
+deploy
+out
+*.log
+*.tsbuildinfo
+next-env.d.ts
+build-info.json
+AGENTS.md

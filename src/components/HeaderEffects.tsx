@@ -17,14 +17,29 @@ export default function HeaderEffects() {
         menuBtn.setAttribute("aria-expanded", "false");
       }
     };
-    const onScroll = () => header.classList.toggle("scrolled", scrollY > 40);
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Escape" || !nav.classList.contains("open")) return;
+      e.preventDefault();
+      nav.classList.remove("open");
+      menuBtn.setAttribute("aria-expanded", "false");
+      menuBtn.focus();
+    };
+    let scrolled: boolean | undefined;
+    const onScroll = () => {
+      const next = scrollY > 40;
+      if (next === scrolled) return;
+      scrolled = next;
+      header.classList.toggle("scrolled", next);
+    };
     menuBtn.addEventListener("click", toggle);
     nav.addEventListener("click", close);
+    header.addEventListener("keydown", onKeyDown);
     addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => {
       menuBtn.removeEventListener("click", toggle);
       nav.removeEventListener("click", close);
+      header.removeEventListener("keydown", onKeyDown);
       removeEventListener("scroll", onScroll);
     };
   }, []);

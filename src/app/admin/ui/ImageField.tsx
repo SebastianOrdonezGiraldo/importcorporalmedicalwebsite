@@ -21,12 +21,12 @@ export default function ImageField({ current, label = "Foto", required = false }
             const f = e.target.files?.[0];
             setError(null);
             if (!f) { setPreview(current); return; }
-            if (f.size > 6 * 1024 * 1024) { setError("La imagen pesa más de 6 MB."); e.target.value = ""; return; }
+            if (f.size > 6 * 1024 * 1024) { setPreview(current); setError("La imagen pesa más de 6 MB."); e.target.value = ""; return; }
             setPreview(URL.createObjectURL(f));
           }}
         />
       </label>
-      <small>JPG, PNG o WebP, máximo 6 MB. Se ajusta automáticamente; mejor con fondo blanco y formato cuadrado.</small>
+      <small>JPG, PNG, WebP o AVIF, máximo 6 MB. Se ajusta automáticamente; mejor con fondo blanco y formato cuadrado.</small>
       {error && <small className="adm-err-text">{error}</small>}
     </div>
   );

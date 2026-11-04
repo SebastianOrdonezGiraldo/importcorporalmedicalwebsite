@@ -4,6 +4,12 @@ out/
 data/
 .env
 .env.local
+.env.*
+!.env.example
 *.log
 next-env.d.ts
 *.tsbuildinfo
+deploy/*.env
+deploy/.state/
+deploy/exports/
+build-info.json

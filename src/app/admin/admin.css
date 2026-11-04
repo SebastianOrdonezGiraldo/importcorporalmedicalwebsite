@@ -65,6 +65,8 @@
 button.adm-pill { cursor: pointer; }
 .adm-pill.on { background: #eef6e3; color: var(--green-ink); }
 .adm-pill.off { background: #eee9ef; color: var(--muted); }
+.adm-pill.blocked { background: #fff3da; color: #785012; }
+.adm-visibility-toggle { background: none; border: 0; padding: 3px 0; color: var(--violet); font: 600 12px var(--font-body); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .adm-pill.star { background: var(--chip); color: var(--violet); }
 .adm-row-actions { white-space: nowrap; text-align: right; }
 .adm-row-actions a, .adm-row-actions button { font: 600 13px var(--font-body); margin-left: 12px; background: none; border: 0; padding: 0; cursor: pointer; color: var(--violet); text-decoration: none; }

@@ -1,41 +1,48 @@
+import Link from "next/link";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { getCategory, getProduct, listProducts } from "@/lib/db";
-import { mediaUrl, waUrl, SITE } from "@/lib/site";
+import { notFound, permanentRedirect } from "next/navigation";
+import { resolveProductSlug, listProducts } from "@/lib/db";
+import { withSearchParams, type PageSearchParams } from "@/lib/redirect-url";
+import { isProductPublished } from "@/lib/product-visibility";
+import { ADVISORS, mediaUrl, waUrl } from "@/lib/site";
+import ProductAdvisorContact from "@/components/ProductAdvisorContact";
 import ProductCard from "@/components/ProductCard";
-import { ArrowRight, Check, WhatsApp } from "@/components/Icons";
+import { pageMetadata, absoluteUrl, breadcrumbData, jsonLd } from "@/lib/seo";
+import { ArrowRight, Check } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: Promise<{ slug: string }>; searchParams: Promise<PageSearchParams> };
 
 function load(slug: string) {
-  const p = getProduct({ slug });
+  const p = resolveProductSlug(slug);
   // Hidden products (or products in a hidden line) are not public.
-  if (!p || !p.visible) return null;
-  if (p.categoryId && !getCategory({ id: p.categoryId })?.visible) return null;
+  if (!p || !isProductPublished(p)) return null;
   return p;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = load((await params).slug);
-  if (!p) return {};
-  return { title: p.name, description: p.summary || undefined, openGraph: { images: [mediaUrl(p.image)] } };
+  if (!p) return { robots: { index: false, follow: true } };
+  return pageMetadata({ title: p.name, description: p.summary || `Consulta por ${p.name} en Import Corporal Medical. Información, precios y disponibilidad por WhatsApp.`,
+    pathname: `/producto/${encodeURIComponent(p.slug)}`, image: p.image ? mediaUrl(p.image) : undefined });
 }
 
-export default async function ProductPage({ params }: Props) {
-  const p = load((await params).slug);
+export default async function ProductPage({ params, searchParams }: Props) {
+  const slug = (await params).slug;
+  const p = load(slug);
   if (!p) notFound();
+  if (p.slug !== slug) permanentRedirect(withSearchParams(`/producto/${encodeURIComponent(p.slug)}`, await searchParams));
   const related = p.categoryId ? listProducts({ categoryId: p.categoryId }).filter((x) => x.id !== p.id).slice(0, 4) : [];
   const paragraphs = p.description.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
-  const productUrl = `${SITE.url}/producto/${p.slug}`;
+  const productUrl = absoluteUrl(`/producto/${encodeURIComponent(p.slug)}`);
 
-  const jsonLd = {
+  const productData = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: p.name,
     description: p.summary || undefined,
-    image: `${SITE.url}${mediaUrl(p.image)}`,
+    image: absoluteUrl(mediaUrl(p.image)),
     brand: p.brand ? { "@type": "Brand", name: p.brand } : undefined,
     category: p.categoryName || undefined,
     url: productUrl,
@@ -46,8 +53,8 @@ export default async function ProductPage({ params }: Props) {
       <section className="band pdetail">
         <div className="wrap">
           <nav className="crumbs dark" aria-label="Ruta">
-            <a href="/">Inicio</a><span>/</span><a href="/catalogo">Catálogo</a>
-            {p.categorySlug && <><span>/</span><a href={`/catalogo/${p.categorySlug}`}>{p.categoryName}</a></>}
+            <Link href="/">Inicio</Link><span>/</span><Link href="/catalogo">Catálogo</Link>
+            {p.categorySlug && <><span>/</span><Link href={`/catalogo/${p.categorySlug}`}>{p.categoryName}</Link></>}
             <span>/</span><b>{p.name}</b>
           </nav>
           <div className="pdetail-grid">
@@ -67,10 +74,11 @@ export default async function ProductPage({ params }: Props) {
                 <li><Check />Precio especial para distribuidores</li>
               </ul>
               <div className="cta-row">
-                <a className="btn btn-violet" href={waUrl(`Hola, quiero información sobre el producto "${p.name}" (${productUrl}).`)} target="_blank" rel="noopener">
-                  <WhatsApp />Consultar por WhatsApp
-                </a>
-                <a className="btn btn-outline" style={{ color: "var(--violet)" }} href="/#registro">Quiero ser distribuidor <ArrowRight /></a>
+                <ProductAdvisorContact productName={p.name} advisors={ADVISORS.map((advisor) => ({
+                  name: advisor.name, role: advisor.role, initials: advisor.initials,
+                  href: waUrl(`Hola ${advisor.first}, quiero información sobre el producto "${p.name}" (${productUrl}).`, advisor.phone),
+                }))} />
+                <Link className="btn btn-outline" style={{ color: "var(--violet)" }} href="/#registro">Quiero ser distribuidor <ArrowRight /></Link>
               </div>
               <p className="pdetail-note">Producto informativo. Pide precios y disponibilidad a un asesor.</p>
             </div>
@@ -89,7 +97,14 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </section>
       )}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd([
+        productData,
+        breadcrumbData([
+          { name: "Inicio", pathname: "/" }, { name: "Catálogo", pathname: "/catalogo" },
+          ...(p.categorySlug ? [{ name: p.categoryName!, pathname: `/catalogo/${encodeURIComponent(p.categorySlug)}` }] : []),
+          { name: p.name, pathname: `/producto/${encodeURIComponent(p.slug)}` },
+        ]),
+      ]) }} />
     </>
   );
 }
