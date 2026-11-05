@@ -28,9 +28,10 @@ export default function LoginChallenge({ siteKey, onToken }: { siteKey: string; 
     const invalidate = (next: "loading" | "error") => {
       if (active) { onToken(""); setStatus(next); }
     };
+    invalidate("loading");
     try {
       widget.current = api.render(container.current, {
-        sitekey: siteKey, action: "admin_login", language: "es", theme: "light", size: "flexible",
+        sitekey: siteKey, action: "admin_login", language: "es", theme: "light", size: "compact",
         "response-field": false, "refresh-expired": "auto",
         callback: (token: string) => { if (active) { onToken(token); setStatus("verified"); } },
         "expired-callback": () => invalidate("loading"),
