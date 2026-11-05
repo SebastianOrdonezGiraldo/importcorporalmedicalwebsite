@@ -7,8 +7,6 @@ a.line { text-decoration: none; color: inherit; }
 .line:hover .line-count::after { margin-left: 4px; }
 
 /* Catalog banner */
-.page-loading { min-height: 55vh; padding-block: 48px; color: var(--muted); }
-.loading-placeholder { height: 180px; margin-top: 24px; border-radius: 18px; background: var(--surface); }
 .cat-hero { position: relative; overflow: hidden; background: var(--violet); color: var(--on-violet); padding-block: 44px 56px; }
 .cat-hero::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.08) 1.5px, transparent 1.5px); background-size: 26px 26px; pointer-events: none;  }
 .cat-hero::before { content: ""; position: absolute; width: 640px; height: 640px; right: -200px; top: -300px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--magenta) 85%, transparent) 0%, transparent 62%); pointer-events: none; }

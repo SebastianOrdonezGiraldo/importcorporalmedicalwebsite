@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/db-initialization.test.cjs tests/catalog.test.cjs tests/distributor-application.test.cjs tests/slug-history.test.cjs tests/storage.test.cjs tests/seo.test.cjs tests/production-config.test.mjs tests/catalog-snapshot.test.mjs tests/turnstile.test.cjs tests/admin-access.test.cjs",
+    "test": "node --test tests/db-initialization.test.cjs tests/catalog.test.cjs tests/distributor-application.test.cjs tests/slug-history.test.cjs tests/storage.test.cjs tests/seo.test.cjs tests/production-config.test.mjs tests/catalog-snapshot.test.mjs tests/turnstile.test.cjs tests/admin-access.test.cjs tests/http-status.test.cjs",
     "storage:migrate": "node --conditions=react-server --import tsx scripts/storage.ts migrate",
     "storage:backup": "node --conditions=react-server --import tsx scripts/storage.ts backup",
     "seo:card": "node scripts/generate-social-card.mjs",
