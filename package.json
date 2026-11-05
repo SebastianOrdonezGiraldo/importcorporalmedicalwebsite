@@ -10,7 +10,8 @@
     "test": "node --test tests/db-initialization.test.cjs tests/catalog.test.cjs tests/distributor-application.test.cjs tests/slug-history.test.cjs tests/storage.test.cjs tests/seo.test.cjs tests/production-config.test.mjs tests/catalog-snapshot.test.mjs",
     "storage:migrate": "node --conditions=react-server --import tsx scripts/storage.ts migrate",
     "storage:backup": "node --conditions=react-server --import tsx scripts/storage.ts backup",
-    "seo:card": "node scripts/generate-social-card.mjs"
+    "seo:card": "node scripts/generate-social-card.mjs",
+    "seo:icons": "node scripts/generate-favicons.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1161.0",

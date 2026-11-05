@@ -16,7 +16,7 @@ export const SITE = {
   name: "Import Corporal Medical",
   legalName: "Import Corporal Medical S.A.S",
   description:
-    "Equipos de fisioterapia y rehabilitación en Colombia. Conoce nuestro catálogo y consulta precios y disponibilidad con un asesor de Import Corporal Medical.",
+    "Equipos de fisioterapia y rehabilitación en Colombia. Explora el catálogo y consulta precios y disponibilidad por WhatsApp.",
   url: siteUrl(),
   whatsapp: "573212591209",
   phoneLabel: "321 259 1209",

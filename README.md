@@ -159,6 +159,8 @@ Para recuperar, descarga una carpeta completa a una ubicación aparte y verifica
 
 ## SEO técnico
 
+- El favicon y el icono de Apple se generan desde el logo original con `npm run seo:icons`, en PNG cuadrado de 192 × 192 y 180 × 180. Conservan las proporciones del logo. En R2 se publican bajo `assets/seo/`; los metadatos declaran formato y tamaño. Publica y verifica esos objetos antes de activar la imagen que los referencia. El favicon debe permanecer accesible y conservar una URL estable para Google.
+
 - `SITE_URL` es el origen público del portal, por ejemplo `https://www.importcorporalmedical.com`. No es el endpoint R2. La compilación de producción falla si falta esta variable o apunta a localhost. El dominio preferido (www o sin www) debe coincidir también con las redirecciones del servidor de producción.
 - `/sitemap.xml` se genera desde los productos y líneas publicados. Incluye productos sin línea, excluye ocultos y direcciones históricas, e incorpora las imágenes públicas. Las fechas de modificación de productos proceden de SQLite; no se inventan fechas para páginas estáticas. Los cambios de publicación se reflejan sin recompilar.
 - `/robots.txt` anuncia el sitemap y permite rastrear las páginas. Los resultados de búsqueda usan `noindex, follow`; no se bloquea su rastreo, para que el buscador pueda leer esa instrucción. El administrador conserva autenticación y `noindex`; robots.txt no reemplaza esas protecciones.

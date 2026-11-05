@@ -13,7 +13,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: { default: SITE.name, template: `%s · ${SITE.name}` },
   description: SITE.description,
-  icons: { icon: assetUrl("/img/logo.png") },
+  icons: {
+    icon: { url: assetUrl("/img/seo/favicon.png"), type: "image/png", sizes: "192x192" },
+    apple: { url: assetUrl("/img/seo/apple-touch-icon.png"), type: "image/png", sizes: "180x180" },
+  },
   openGraph: { siteName: SITE.name, locale: "es_CO", type: "website", images: [{ url: absoluteUrl(SOCIAL_IMAGE), width: 1200, height: 630, alt: SITE.name }] },
   twitter: { card: "summary_large_image", images: [absoluteUrl(SOCIAL_IMAGE)] },
   verification: { google: process.env.GOOGLE_SITE_VERIFICATION || undefined },
