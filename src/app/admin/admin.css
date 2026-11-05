@@ -65,6 +65,8 @@
 button.adm-pill { cursor: pointer; }
 .adm-pill.on { background: #eef6e3; color: var(--green-ink); }
 .adm-pill.off { background: #eee9ef; color: var(--muted); }
+.adm-pill.blocked { background: #fff3da; color: #785012; }
+.adm-visibility-toggle { background: none; border: 0; padding: 3px 0; color: var(--violet); font: 600 12px var(--font-body); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .adm-pill.star { background: var(--chip); color: var(--violet); }
 .adm-row-actions { white-space: nowrap; text-align: right; }
 .adm-row-actions a, .adm-row-actions button { font: 600 13px var(--font-body); margin-left: 12px; background: none; border: 0; padding: 0; cursor: pointer; color: var(--violet); text-decoration: none; }
@@ -75,6 +77,10 @@ button.adm-pill { cursor: pointer; }
 /* Forms */
 .adm-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 26px; }
 .adm-form { display: grid; gap: 16px; }
+.adm-challenge { min-width: 0; }
+.adm-challenge > div { display: flex; justify-content: center; }
+.adm-challenge p { font-size: 13px; margin: 8px 0 0; }
+.adm-challenge-retry { margin-top: 8px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; background: #fff; color: var(--violet); cursor: pointer; font: inherit; }
 .adm-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; }
 .adm-col { display: grid; gap: 16px; align-content: start; }
 .adm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }

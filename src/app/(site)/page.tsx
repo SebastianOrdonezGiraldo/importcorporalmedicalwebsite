@@ -1,9 +1,13 @@
+import Link from "next/link";
 import { Fragment, type CSSProperties } from "react";
-import { listCategories } from "@/lib/db";
-import { ADVISORS, BRANDS, HERO_SLIDES, KEYWORDS, SITE, mediaUrl, waUrl } from "@/lib/site";
+import { countPublicProducts, listCategories } from "@/lib/db";
+import { ADVISORS, BRANDS, HERO_SLIDES, KEYWORDS, REGIONS, SITE, mediaUrl, waUrl, assetUrl } from "@/lib/site";
 import { ArrowRight, Check, Mail, WhatsApp } from "@/components/Icons";
 import HomeEffects from "./HomeEffects";
 import ApplyForm from "./ApplyForm";
+import { pageMetadata, absoluteUrl, jsonLd } from "@/lib/seo";
+
+export const metadata = pageMetadata({ title: "Equipos de fisioterapia en Colombia", description: SITE.description, pathname: "/" });
 
 // Reads the catalog on every request so admin changes show up immediately.
 export const dynamic = "force-dynamic";
@@ -12,17 +16,20 @@ const v = (vars: Record<string, string | number>) => vars as CSSProperties;
 
 export default function HomePage() {
   const lines = listCategories();
-  const productTotal = lines.reduce((n, l) => n + l.productCount, 0);
+  const lineTotal = lines.length;
+  const lineLabel = lineTotal === 1 ? "línea de producto" : "líneas de producto";
+  const productTotal = countPublicProducts();
 
   return (
     <>
       <section className="hero" id="inicio" aria-roledescription="carrusel" aria-label="Destacados">
+        <button className="hero-rotation" id="heroToggle" type="button" aria-controls="slides" aria-label="Pausar carrusel">Pausar</button>
         <div className="glow" aria-hidden="true"></div>
-        <div className="wrap slides" id="slides">
+        <div className="wrap slides" id="slides" aria-live="off">
           {HERO_SLIDES.map((s, k) => {
             const H = k === 0 ? "h1" : "h2";
             return (
-              <div key={k} className={`slide${k === 0 ? " on" : ""}`} role="group" aria-roledescription="diapositiva" aria-label={`${k + 1} de ${HERO_SLIDES.length}`}>
+              <div key={k} className={`slide${k === 0 ? " on" : ""}`} inert={k !== 0} role="group" aria-roledescription="diapositiva" aria-label={`${k + 1} de ${HERO_SLIDES.length}`}>
                 <div className="slide-copy">
                   <span className="kicker">{s.kicker}</span>
                   <H>
@@ -32,11 +39,11 @@ export default function HomePage() {
                   <p>{s.text}</p>
                   <div className="cta-row">
                     <a className="btn btn-green" href="#registro">Quiero ser distribuidor <ArrowRight /></a>
-                    <a className="btn btn-outline" href="/catalogo">Ver catálogo</a>
+                    <Link className="btn btn-outline" href="/catalogo">Ver catálogo</Link>
                   </div>
                 </div>
                 <div className="slide-art">
-                  <div className="disc"><img src={s.img} alt={s.alt} /></div>
+                  <div className="disc"><img src={k === 0 ? assetUrl(s.img) : undefined} data-src={k === 0 ? undefined : assetUrl(s.img)} alt={s.alt} width={440} height={440} loading={k === 0 ? "eager" : "lazy"} fetchPriority={k === 0 ? "high" : "low"} decoding="async" /></div>
                   <span className="chip-float a">{s.chipA}</span>
                   <span className="chip-float b"><Check />{s.chipB}</span>
                 </div>
@@ -68,14 +75,15 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        <div className="marquee" aria-hidden="true">
-          <div className="mq-track">
+        <div className="marquee">
+          <div className="mq-track" id="keywords" aria-hidden="true">
             {[0, 1].map((rep) => KEYWORDS.map((k, n) => (
               <Fragment key={`${rep}-${n}`}>
                 <span className={n % 2 ? "o" : ""}>{k}</span><i></i>
               </Fragment>
             )))}
           </div>
+          <button className="marquee-toggle" id="marqueeToggle" type="button" aria-controls="keywords">Pausar palabras</button>
         </div>
       </section>
 
@@ -93,16 +101,16 @@ export default function HomePage() {
               <a className="btn btn-violet rv" style={v({ "--i": 4 })} href="#programa">Ver programa <ArrowRight /></a>
             </div>
             <div className="hexes" aria-hidden="true">
-              <div className="hex rv z" style={v({ "--i": 0 })}><img src="/img/hero/botas-presoterapia.jpg" alt="" style={v({ "--i": 0 })} /></div>
-              <div className="hex rv z" style={v({ "--i": 1 })}><img src="/img/hero/stim-basic.jpg" alt="" style={v({ "--i": 1 })} /></div>
-              <div className="hex solid rv s" style={v({ "--i": 2 })}><div><b>37</b><span>líneas de producto</span></div></div>
-              <div className="hex rv z" style={v({ "--i": 3 })}><img src="/img/hero/pedal-electrico.jpg" alt="" style={v({ "--i": 2 })} /></div>
+              <div className="hex rv z" style={v({ "--i": 0 })}><img src={assetUrl("/img/hero/botas-presoterapia.jpg")} alt="" width={420} height={420} loading="lazy" decoding="async" style={v({ "--i": 0 })} /></div>
+              <div className="hex rv z" style={v({ "--i": 1 })}><img src={assetUrl("/img/hero/stim-basic.jpg")} alt="" width={420} height={420} loading="lazy" decoding="async" style={v({ "--i": 1 })} /></div>
+              <div className="hex solid rv s" style={v({ "--i": 2 })}><div><b>{lineTotal}</b><span>{lineLabel}</span></div></div>
+              <div className="hex rv z" style={v({ "--i": 3 })}><img src={assetUrl("/img/hero/pedal-electrico.jpg")} alt="" width={420} height={420} loading="lazy" decoding="async" style={v({ "--i": 2 })} /></div>
             </div>
           </div>
           <div className="counters rv z" id="counters">
             <h3>Experiencia y respaldo</h3>
             <div className="counter"><b data-to="10" data-prefix="+">+10</b><span>años importando</span></div>
-            <div className="counter"><b data-to="37">37</b><span>líneas de producto</span></div>
+            <div className="counter"><b data-to={lineTotal}>{lineTotal}</b><span>{lineLabel}</span></div>
             <div className="counter"><b data-to={BRANDS.length}>{BRANDS.length}</b><span>marcas</span></div>
           </div>
         </div>
@@ -133,7 +141,7 @@ export default function HomePage() {
                 );
               })}
             </div>
-            <div className="core"><img src="/img/logo.png" alt="" /></div>
+            <div className="core"><img src={assetUrl("/img/logo.png")} alt="" /></div>
           </div>
         </div>
       </section>
@@ -146,7 +154,7 @@ export default function HomePage() {
           </div>
           <div className="lines" id="lines">
             {lines.map((l, k) => (
-              <a key={l.id} className="line rv" data-tilt href={`/catalogo/${l.slug}`} style={v({ "--i": k % 4 })}>
+              <Link key={l.id} className="line rv" href={`/catalogo/${l.slug}`} style={v({ "--i": k % 4 })}>
                 <div className="ph">
                   {l.flag && <span className="flag">{l.flag}</span>}
                   <img src={mediaUrl(l.image)} alt="" loading="lazy" />
@@ -156,11 +164,11 @@ export default function HomePage() {
                   <div className="tags">{l.tags.map((t) => <span key={t}>{t}</span>)}</div>
                   <span className="line-count">{l.productCount} {l.productCount === 1 ? "producto" : "productos"}</span>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
           <div className="cta-row rv" style={{ justifyContent: "center", marginTop: 40 }}>
-            <a className="btn btn-violet" href="/catalogo">Ver los {productTotal} productos <ArrowRight /></a>
+            <Link className="btn btn-violet" href="/catalogo">Ver los {productTotal} productos <ArrowRight /></Link>
             <a className="btn btn-outline" style={{ color: "var(--violet)" }} href={waUrl("Hola, quiero recibir el catálogo de distribuidor 2026.")} target="_blank" rel="noopener">Recibir catálogo completo</a>
           </div>
         </div>
@@ -185,7 +193,7 @@ export default function HomePage() {
           </div>
           <div className="benefits">
             {BENEFITS.map((b, i) => (
-              <div key={b.t} className="benefit rv r" style={v({ "--i": i })} data-tilt>
+              <div key={b.t} className="benefit rv r" style={v({ "--i": i })}>
                 <span className="ico draw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{b.icon}</svg></span>
                 <h3>{b.t}</h3><p>{b.p}</p>
               </div>
@@ -227,10 +235,15 @@ export default function HomePage() {
           <div>
             <span className="eyebrow rv">Cobertura</span>
             <h2 className="title rv" style={v({ "--i": 1 })}>Despachos a <mark>todo el país</mark></h2>
-            <div className="tabs rv" style={v({ "--i": 2 })} role="tablist" aria-label="Regiones" id="tabs"></div>
-            <div className="tabpanel" role="tabpanel" id="tabpanel" aria-live="polite"></div>
+            <div className="tabs rv" style={v({ "--i": 2 })} role="tablist" aria-label="Regiones" id="tabs">
+              {REGIONS.map((region, k) => <button key={region.name} className="tab" role="tab" id={`tab-${k}`} type="button" aria-controls="tabpanel" aria-selected={k === 0} tabIndex={k === 0 ? 0 : -1}>{region.name}</button>)}
+            </div>
+            <div className="tabpanel" role="tabpanel" id="tabpanel" aria-labelledby="tab-0" tabIndex={0} aria-live="polite">
+              <div className="deps">{REGIONS[0].deps.map((department) => <span key={department}>{department}</span>)}</div>
+              <p>Despacho por transportadora nacional.</p>
+            </div>
           </div>
-          <svg className="hub rv z" id="hub" viewBox="0 0 560 520" role="img" aria-label="Diagrama de despachos hacia las regiones de Colombia"></svg>
+          <svg className="hub rv z" id="hub" viewBox="0 0 560 520" role="group" aria-label="Seleccionar región en el diagrama de despachos"></svg>
         </div>
       </section>
 
@@ -279,8 +292,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <nav className="sec-nav" id="secNav" aria-label="Ir a sección"></nav>
       <HomeEffects />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({
+        "@context": "https://schema.org", "@type": "WebSite", "@id": absoluteUrl("/#website"),
+        name: SITE.name, url: absoluteUrl("/"), inLanguage: "es-CO", publisher: { "@id": absoluteUrl("/#organization") },
+      }) }} />
     </>
   );
 }

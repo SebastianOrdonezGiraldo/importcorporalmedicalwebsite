@@ -1,54 +1,86 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent, type MouseEvent } from "react";
 import { waUrl } from "@/lib/site";
 import { ArrowRight, Check } from "@/components/Icons";
+import { APPLICATION_LIMITS, BUSINESS_TYPES, prepareDistributorApplication, type ApplicationErrors, type ApplicationField } from "@/lib/distributor-application";
 
-type Status = { kind: "ok"; href: string } | { kind: "error"; text: string } | null;
+type Status = { kind: "ok"; href: string; message: string } | { kind: "error"; text: string } | null;
+
+const fields = [
+  { name: "company", label: "Empresa", placeholder: "Razón social o negocio", autoComplete: "organization", inputMode: "text", type: "text" },
+  { name: "nit", label: "NIT o cédula", placeholder: "900123456-7", autoComplete: "off", inputMode: "text", type: "text" },
+  { name: "name", label: "Contacto", placeholder: "Tu nombre", autoComplete: "name", inputMode: "text", type: "text" },
+  { name: "phone", label: "Celular", placeholder: "300 000 0000", autoComplete: "tel", inputMode: "tel", type: "tel" },
+  { name: "city", label: "Ciudad", placeholder: "Ej.: Medellín", autoComplete: "address-level2", inputMode: "text", type: "text" },
+] as const;
 
 /** Distributor registration: validates and builds a WhatsApp message (nothing is stored). */
 export default function ApplyForm({ lines }: { lines: { name: string; img: string }[] }) {
-  const [status, setStatusRaw] = useState<Status>(null);
-  const [nonce, setNonce] = useState(0);
-  const setStatus = (s: Status) => { setStatusRaw(s); setNonce((n) => n + 1); };
+  const [status, setStatus] = useState<Status>(null);
+  const [errors, setErrors] = useState<ApplicationErrors>({});
+  const formRef = useRef<HTMLFormElement>(null);
+
+  function clearPreparedState() {
+    if (status) setStatus(null);
+    if (Object.keys(errors).length) setErrors({});
+  }
+
+  function showErrors(form: HTMLFormElement, nextErrors: ApplicationErrors) {
+    setErrors(nextErrors);
+    setStatus({ kind: "error", text: "Revisa los campos marcados antes de preparar la solicitud." });
+    const first = Object.keys(nextErrors)[0];
+    if (first === "lines") form.querySelector<HTMLInputElement>('input[name="lines"]')?.focus();
+    else {
+      const input = form.elements.namedItem(first);
+      if (input instanceof HTMLElement) input.focus();
+    }
+  }
+
+  const fieldError = (field: ApplicationField | "lines") => errors[field]
+    ? <span className="field-error" id={`f-${field}-error`}>{errors[field]}</span>
+    : null;
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      const bad = form.querySelector(":invalid");
-      setStatus({ kind: "error", text: bad?.id === "f-nit" ? "Revisa el NIT: solo números y el dígito de verificación." : "Completa los campos obligatorios." });
+    const result = prepareDistributorApplication(new FormData(form), lines.map((line) => line.name));
+    if (!result.ok) {
+      showErrors(form, result.errors);
       return;
     }
-    const fd = new FormData(form);
-    const v = (k: string) => String(fd.get(k) ?? "").trim();
-    const chosen = fd.getAll("lines").map(String);
-    const msg = [
-      "Hola, quiero ser distribuidor de Import Corporal Medical.",
-      `Empresa: ${v("company")}`,
-      `NIT: ${v("nit")}`,
-      `Contacto: ${v("name")}`,
-      `Celular: ${v("phone")}`,
-      `Ciudad: ${v("city")}`,
-      `Tipo de negocio: ${v("type")}`,
-      chosen.length ? `Líneas de interés: ${chosen.join(", ")}` : "",
-      v("msg") ? `Comentarios: ${v("msg")}` : "",
-    ].filter(Boolean).join("\n");
-    setStatus({ kind: "ok", href: waUrl(msg) });
+    setErrors({});
+    setStatus({ kind: "ok", href: waUrl(result.message), message: result.message });
+  }
+
+  function verifyPreparedMessage(e: MouseEvent<HTMLAnchorElement>) {
+    const form = formRef.current;
+    if (!form || status?.kind !== "ok") { e.preventDefault(); return; }
+    // Some autofill tools change values without emitting an input/change event.
+    const current = prepareDistributorApplication(new FormData(form), lines.map((line) => line.name));
+    if (!current.ok) { e.preventDefault(); showErrors(form, current.errors); }
+    else if (current.message !== status.message) {
+      e.preventDefault();
+      setStatus({ kind: "error", text: "Los datos cambiaron. Prepara la solicitud de nuevo antes de abrir WhatsApp." });
+    }
   }
 
   return (
-    <form className="apply rv l" id="applyForm" noValidate onSubmit={onSubmit}>
+    <form ref={formRef} className="apply rv l" id="applyForm" noValidate onSubmit={onSubmit} onChange={clearPreparedState} onReset={clearPreparedState}>
       <h3>Quiero ser distribuidor</h3>
-      <div className="field"><label htmlFor="f-company">Empresa <em>*</em></label><input id="f-company" name="company" required autoComplete="organization" placeholder="Razón social o negocio" /></div>
-      <div className="field"><label htmlFor="f-nit">NIT <em>*</em></label><input id="f-nit" name="nit" required inputMode="numeric" pattern="[0-9]{6,10}(-?[0-9])?" placeholder="900123456-7" aria-describedby="nit-hint" /><span className="hint" id="nit-hint">Con dígito de verificación, o tu cédula.</span></div>
-      <div className="field"><label htmlFor="f-name">Contacto <em>*</em></label><input id="f-name" name="name" required autoComplete="name" placeholder="Tu nombre" /></div>
-      <div className="field"><label htmlFor="f-phone">Celular <em>*</em></label><input id="f-phone" name="phone" required inputMode="tel" autoComplete="tel" pattern="[0-9 +]{10,15}" placeholder="300 000 0000" /></div>
-      <div className="field"><label htmlFor="f-city">Ciudad <em>*</em></label><input id="f-city" name="city" required autoComplete="address-level2" placeholder="Ej.: Medellín" /></div>
+      {fields.map(({ label, ...field }) => (
+        <div className="field" key={field.name}>
+          <label htmlFor={`f-${field.name}`}>{label} <em>*</em></label>
+          <input {...field} id={`f-${field.name}`} required maxLength={APPLICATION_LIMITS[field.name]} aria-invalid={errors[field.name] ? true : undefined}
+            aria-describedby={[field.name === "nit" ? "nit-hint" : "", errors[field.name] ? `f-${field.name}-error` : ""].filter(Boolean).join(" ") || undefined} />
+          {field.name === "nit" && <span className="hint" id="nit-hint">NIT con o sin dígito de verificación, o tu cédula. Puedes usar puntos y guion.</span>}
+          {fieldError(field.name)}
+        </div>
+      ))}
       <div className="field"><label htmlFor="f-type">Tipo de negocio</label>
-        <select id="f-type" name="type">
-          {["Tienda médica u ortopédica", "Droguería o farmacia", "Fisioterapeuta o consultorio", "Gimnasio o centro deportivo", "Tienda en línea o revendedor", "IPS o clínica", "Otro"].map((o) => <option key={o}>{o}</option>)}
+        <select id="f-type" name="type" aria-invalid={errors.type ? true : undefined} aria-describedby={errors.type ? "f-type-error" : undefined}>
+          {BUSINESS_TYPES.map((o) => <option key={o}>{o}</option>)}
         </select>
+        {fieldError("type")}
       </div>
       <fieldset className="field full">
         <legend>Líneas de interés</legend>
@@ -61,19 +93,19 @@ export default function ApplyForm({ lines }: { lines: { name: string; img: strin
             </label>
           ))}
         </div>
+        {fieldError("lines")}
       </fieldset>
-      <div className="field full"><label htmlFor="f-msg">Comentarios</label><textarea id="f-msg" name="msg" placeholder="Opcional"></textarea></div>
+      <div className="field full"><label htmlFor="f-msg">Comentarios</label><textarea id="f-msg" name="msg" placeholder="Opcional" maxLength={APPLICATION_LIMITS.msg} aria-invalid={errors.msg ? true : undefined} aria-describedby={errors.msg ? "f-msg-error" : undefined}></textarea>{fieldError("msg")}</div>
       <div className="actions">
-        <button className="btn btn-violet" type="submit">Solicitar lista de precios <ArrowRight /></button>
-        {status && (
-          <span className="ok" id="formOk" key={nonce} style={status.kind === "error" ? { color: "var(--magenta)" } : undefined}>
-            {status.kind === "ok"
-              ? <>Tu solicitud está lista. <a href={status.href} target="_blank" rel="noopener">Abrir WhatsApp para enviarla</a></>
-              : status.text}
-          </span>
-        )}
+        <button className="btn btn-violet" type="submit">Preparar solicitud <ArrowRight /></button>
+        <span className={status ? "ok" : undefined} id="formOk" role="status" aria-live="polite" aria-atomic="true" style={status?.kind === "error" ? { color: "var(--magenta)" } : undefined}>
+          {status?.kind === "ok"
+            ? <>Mensaje preparado. <a href={status.href} onClick={verifyPreparedMessage} target="_blank" rel="noopener">Abrir WhatsApp para enviarlo</a></>
+            : status?.text}
+        </span>
       </div>
-      <p className="legal-note">Al enviar aceptas nuestra Política de privacidad.</p>
+      <p className="legal-note">Preparar el mensaje no lo envía. Abre WhatsApp y envíalo para completar tu solicitud.</p>
+      <p className="legal-note">Al enviar aceptas nuestra <a href="/politica-de-privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</p>
     </form>
   );
 }

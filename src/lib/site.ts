@@ -3,12 +3,21 @@
  * Edita aquí teléfonos, asesores, marcas, regiones y textos del carrusel.
  */
 
+function siteUrl() {
+  const configured = process.env.SITE_URL;
+  const url = new URL(configured || "http://localhost:3000");
+  if (!["http:", "https:"].includes(url.protocol) || url.username || url.password || url.pathname !== "/" || url.search || url.hash || url.hostname.endsWith(".r2.cloudflarestorage.com")) {
+    throw new Error("SITE_URL debe ser el origen público del portal, sin rutas ni credenciales. R2 se configura por separado.");
+  }
+  return url.origin;
+}
+
 export const SITE = {
   name: "Import Corporal Medical",
   legalName: "Import Corporal Medical S.A.S",
   description:
-    "Import Corporal Medical S.A.S: importadores y distribuidores de equipos de fisioterapia y rehabilitación. Programa de distribuidores 2026.",
-  url: process.env.SITE_URL || "http://localhost:3000",
+    "Equipos de fisioterapia y rehabilitación en Colombia. Explora el catálogo y consulta precios y disponibilidad por WhatsApp.",
+  url: siteUrl(),
   whatsapp: "573212591209",
   phoneLabel: "321 259 1209",
   email: "info@importcorporalmedical.com",
@@ -18,7 +27,7 @@ export const SITE = {
 
 export const ADVISORS = [
   { initials: "JS", name: "Juan Sebastián Lombana", role: "Asesor comercial", phone: "573212591209", first: "Juan Sebastián" },
-  { initials: "SL", name: "Stefania López", role: "Asesora comercial", phone: "573212591209", first: "Stefania" },
+  { initials: "SL", name: "Stefania López", role: "Asesora comercial", phone: "573117479607", first: "Stefania" },
 ];
 
 export const BRANDS = [
@@ -54,4 +63,8 @@ export const waUrl = (msg: string, phone: string = SITE.whatsapp) =>
   `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 
 /** Public URL of an image stored in DATA_DIR/uploads. */
-export const mediaUrl = (file: string | null | undefined) => (file ? `/media/${encodeURIComponent(file)}` : "/img/placeholder.svg");
+export const mediaUrl = (file: string | null | undefined) => (file ? `/media/${encodeURIComponent(file)}` : assetUrl("/img/placeholder.svg"));
+
+/** Only public image paths are exposed; credentials and backup keys stay on the server. */
+export const assetUrl = (file: string) => process.env.STORAGE_DRIVER === "r2" && file.startsWith("/img/")
+  ? `/assets/${file.slice(5).split("/").map(encodeURIComponent).join("/")}` : file;

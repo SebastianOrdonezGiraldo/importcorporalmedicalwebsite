@@ -6,14 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/db-initialization.test.cjs tests/catalog.test.cjs tests/distributor-application.test.cjs tests/slug-history.test.cjs tests/storage.test.cjs tests/seo.test.cjs tests/production-config.test.mjs tests/catalog-snapshot.test.mjs tests/turnstile.test.cjs tests/admin-access.test.cjs",
+    "storage:migrate": "node --conditions=react-server --import tsx scripts/storage.ts migrate",
+    "storage:backup": "node --conditions=react-server --import tsx scripts/storage.ts backup",
+    "seo:card": "node scripts/generate-social-card.mjs",
+    "seo:icons": "node scripts/generate-favicons.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1161.0",
     "next": "^16.4.5",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "server-only": "^0.0.1",
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "tsx": "^4.23.15"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
+import { requireAdmin } from "@/lib/auth";
 import { getCategory } from "@/lib/db";
 import { mediaUrl } from "@/lib/site";
 import CategoryForm from "../../../ui/CategoryForm";
 
 export default async function EditLine({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdmin();
   const c = getCategory({ id: Number((await params).id) });
   if (!c) notFound();
   return (

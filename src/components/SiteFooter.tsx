@@ -1,4 +1,5 @@
-import { SITE, waUrl } from "@/lib/site";
+import Link from "next/link";
+import { SITE, waUrl, assetUrl } from "@/lib/site";
 import { Mail, Phone, WhatsApp } from "./Icons";
 
 export default function SiteFooter() {
@@ -8,7 +9,7 @@ export default function SiteFooter() {
         <div className="wrap">
           <div className="foot-top">
             <div className="foot-brand rv">
-              <a className="brand" href="/"><img src="/img/logo.png" alt="" width={48} height={48} /><span className="brand-word"><strong>IMPORT CORPORAL</strong><small>MEDICAL S.A.S</small></span></a>
+              <Link className="brand" href="/"><img src={assetUrl("/img/logo.png")} alt="" width={48} height={48} /><span className="brand-word"><strong>IMPORT CORPORAL</strong><small>MEDICAL S.A.S</small></span></Link>
               <p>Equipos y soluciones terapéuticas para rehabilitación y fisioterapia en toda Colombia.</p>
             </div>
             <div className="rv" style={{ "--i": 1 } as React.CSSProperties}>
@@ -21,22 +22,22 @@ export default function SiteFooter() {
             <div className="rv" style={{ "--i": 2 } as React.CSSProperties}>
               <h4>Distribuidores</h4>
               <ul>
-                <li><a href="/#nosotros">Nosotros</a></li>
-                <li><a href="/#marcas">Marcas</a></li>
-                <li><a href="/catalogo">Catálogo</a></li>
-                <li><a href="/#programa">Programa</a></li>
-                <li><a href="/#registro">Registro</a></li>
+                <li><Link href="/#nosotros">Nosotros</Link></li>
+                <li><Link href="/#marcas">Marcas</Link></li>
+                <li><Link href="/catalogo">Catálogo</Link></li>
+                <li><Link href="/#programa">Programa</Link></li>
+                <li><Link href="/#registro">Registro</Link></li>
               </ul>
             </div>
             <div className="rv" style={{ "--i": 3 } as React.CSSProperties}>
               <h4>Legal</h4>
               <ul>
-                <li><span>Política de privacidad</span></li>
-                <li><span>Aviso legal</span></li>
-                <li><a href="/#registro">Contáctanos</a></li>
-                <li><span>Política de cookies</span></li>
-                <li><span>Términos y condiciones</span></li>
-                <li><span>Política de Cambios, Devoluciones, Derecho de Retracto y Garantías</span></li>
+                <li><Link href="/politica-de-privacidad">Política de privacidad</Link></li>
+                <li><Link href="/terminos-y-condiciones#identificacion">Aviso legal</Link></li>
+                <li><Link href="/#registro">Contáctanos</Link></li>
+                <li><Link href="/politica-de-privacidad#seccion-9">Política de cookies</Link></li>
+                <li><Link href="/terminos-y-condiciones">Términos y condiciones</Link></li>
+                <li><Link href="/cambios-devoluciones-y-garantias">Política de Cambios, Devoluciones, Derecho de Retracto y Garantías</Link></li>
               </ul>
             </div>
           </div>

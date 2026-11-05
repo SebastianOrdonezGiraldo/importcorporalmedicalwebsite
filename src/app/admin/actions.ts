@@ -1,13 +1,16 @@
 "use server";
 import { headers } from "next/headers";
+import { isIP } from "node:net";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
-  deleteCategory, deleteProduct, getCategory, getProduct, saveCategory, saveProduct, slugTaken,
+  deleteCategory, deleteProduct, getCategory, getProduct, saveCategory, saveProduct, slugTaken, SlugConflictError, toggleProductVisibility,
 } from "@/lib/db";
 import { checkPassword, createSession, destroySession, requireAdmin } from "@/lib/auth";
 import { removeIfUnused, saveUpload } from "@/lib/uploads";
 import { slugify } from "@/lib/slug";
+import { emptyProductDetails, readProductDetails, type ProductDetails } from "@/lib/product-details";
+import { verifyLoginChallenge } from "@/lib/turnstile";
 
 export type FormState = { error?: string; ok?: string } | undefined;
 
@@ -21,6 +24,9 @@ export async function login(_: FormState, fd: FormData): Promise<FormState> {
   const now = Date.now();
   const a = attempts.get(ip);
   if (a && a.until > now && a.n >= 8) return { error: "Demasiados intentos. Espera unos minutos." };
+  if (!await verifyLoginChallenge(fd.get("cf-turnstile-response"), isIP(ip) ? ip : undefined)) {
+    return { error: "No se pudo completar la verificación de seguridad. Inténtalo de nuevo." };
+  }
   if (!checkPassword(String(fd.get("password") ?? ""))) {
     const cur = a && a.until > now ? a : { n: 0, until: now + 15 * 60_000 };
     attempts.set(ip, { ...cur, n: cur.n + 1 });
@@ -59,11 +65,18 @@ export async function saveProductAction(id: number | null, _: FormState, fd: For
 
   const name = str(fd, "name", 120);
   if (!name) return { error: "El nombre es obligatorio." };
-  const slug = slugify(str(fd, "slug", 120) || name);
+  const slug = slugify(str(fd, "slug", 120) || current?.slug || name);
   if (!slug) return { error: "El enlace (slug) no es válido." };
-  if (slugTaken("products", slug, id)) return { error: `Ya existe un producto con el enlace “${slug}”.` };
+  if (slugTaken("products", slug, id)) return { error: new SlugConflictError(slug).message };
   const categoryId = int(fd, "categoryId") || null;
   if (categoryId && !getCategory({ id: categoryId })) return { error: "La línea elegida no existe." };
+
+  let details: ProductDetails;
+  try {
+    details = fd.has("reference") ? readProductDetails(fd) : current?.details ?? emptyProductDetails();
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
 
   let image = current?.image ?? null;
   try {
@@ -74,17 +87,24 @@ export async function saveProductAction(id: number | null, _: FormState, fd: For
   }
   if (!image) return { error: "Sube una foto del producto." };
 
-  const newId = saveProduct(id, {
-    slug, name, categoryId,
-    summary: str(fd, "summary", 300),
-    description: str(fd, "description", 5000),
-    brand: optional(fd, "brand"),
-    badge: optional(fd, "badge", 30),
-    image,
-    featured: fd.get("featured") === "on",
-    visible: fd.get("visible") === "on",
-    sortOrder: int(fd, "sortOrder"),
-  });
+  let newId: number;
+  try {
+    newId = saveProduct(id, {
+      slug, name, categoryId, details,
+      summary: str(fd, "summary", 300),
+      description: str(fd, "description", 5000),
+      brand: optional(fd, "brand"),
+      badge: optional(fd, "badge", 30),
+      image,
+      featured: fd.get("featured") === "on",
+      visible: fd.get("visible") === "on",
+      sortOrder: int(fd, "sortOrder"),
+    });
+  } catch (e) {
+    if (image !== current?.image) await removeIfUnused(image);
+    if (!(e instanceof SlugConflictError)) throw e;
+    return { error: e.message };
+  }
   if (current?.image && current.image !== image) await removeIfUnused(current.image);
   refreshPublic(`/producto/${slug}`);
   redirect(`/admin/productos?ok=${encodeURIComponent(id ? "Producto actualizado." : "Producto creado.")}#p${newId}`);
@@ -103,10 +123,7 @@ export async function deleteProductAction(fd: FormData) {
 
 export async function toggleProductVisible(fd: FormData) {
   await requireAdmin();
-  const p = getProduct({ id: Number(fd.get("id")) });
-  if (!p) return;
-  const { id, createdAt: _c, updatedAt: _u, categoryName: _n, categorySlug: _s, ...rest } = p;
-  saveProduct(id, { ...rest, visible: !p.visible });
+  toggleProductVisibility(Number(fd.get("id")));
   refreshPublic();
   revalidatePath("/admin/productos");
 }
@@ -120,9 +137,9 @@ export async function saveCategoryAction(id: number | null, _: FormState, fd: Fo
 
   const name = str(fd, "name", 80);
   if (!name) return { error: "El nombre es obligatorio." };
-  const slug = slugify(str(fd, "slug", 80) || name);
+  const slug = slugify(str(fd, "slug", 80) || current?.slug || name);
   if (!slug) return { error: "El enlace (slug) no es válido." };
-  if (slugTaken("categories", slug, id)) return { error: `Ya existe una línea con el enlace “${slug}”.` };
+  if (slugTaken("categories", slug, id)) return { error: new SlugConflictError(slug).message };
 
   let image = current?.image ?? null;
   try {
@@ -133,13 +150,19 @@ export async function saveCategoryAction(id: number | null, _: FormState, fd: Fo
   }
 
   const tags = str(fd, "tags", 300).split(",").map((t) => t.trim()).filter(Boolean).slice(0, 6);
-  saveCategory(id, {
-    slug, name, tags, image,
-    description: str(fd, "description", 400),
-    flag: optional(fd, "flag", 24),
-    sortOrder: int(fd, "sortOrder"),
-    visible: fd.get("visible") === "on",
-  });
+  try {
+    saveCategory(id, {
+      slug, name, tags, image,
+      description: str(fd, "description", 400),
+      flag: optional(fd, "flag", 24),
+      sortOrder: int(fd, "sortOrder"),
+      visible: fd.get("visible") === "on",
+    });
+  } catch (e) {
+    if (image !== current?.image) await removeIfUnused(image);
+    if (!(e instanceof SlugConflictError)) throw e;
+    return { error: e.message };
+  }
   if (current?.image && current.image !== image) await removeIfUnused(current.image);
   refreshPublic(`/catalogo/${slug}`);
   redirect(`/admin/lineas?ok=${encodeURIComponent(id ? "Línea actualizada." : "Línea creada.")}`);
@@ -147,10 +170,10 @@ export async function saveCategoryAction(id: number | null, _: FormState, fd: Fo
 
 export async function deleteCategoryAction(fd: FormData) {
   await requireAdmin();
-  const c = getCategory({ id: Number(fd.get("id")) });
+  const c = deleteCategory(Number(fd.get("id")));
   if (!c) redirect("/admin/lineas");
-  deleteCategory(c.id); // products keep existing, without a line
   await removeIfUnused(c.image);
   refreshPublic();
-  redirect(`/admin/lineas?ok=${encodeURIComponent(`Línea “${c.name}” eliminada. Sus productos quedaron sin línea.`)}`);
+  const result = c.visible ? "conservan su visibilidad" : "permanecen ocultos";
+  redirect(`/admin/lineas?ok=${encodeURIComponent(`Línea “${c.name}” eliminada. Sus productos quedaron sin línea y ${result}.`)}`);
 }
