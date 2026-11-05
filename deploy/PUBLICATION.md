@@ -42,7 +42,7 @@ No cambiar MX, TXT, correo, NS ni subdominios de otros servicios. Revisar cualqu
 
 6. Confirmar los archivos reales del certificado. Sustituir solo el nuevo sitio del portal por `nginx/site-https.conf`, ejecutar `nginx -t` y recargar Nginx. La configuración envía HTTP y el dominio sin www al origen canónico HTTPS conservando ruta y consulta; permite cargas de 8 MB y conserva el streaming de Next.
 7. Verificar HTTPS de ambos nombres sin omitir la validación TLS, redirecciones, salud y versión, catálogo, productos, imágenes R2 y login. Comprobar también una subida administrativa, un respaldo completo y las URLs del sitio anterior que requieran redirección.
-8. Revisar el temporizador de renovación y ejecutar `certbot renew --cert-name importcorporalmedical.com --dry-run`. La ruta ACME permanece disponible en la configuración final. Configurar una recarga Nginx al renovar si el servidor no la tiene.
+8. Revisar el temporizador de renovación. Si no existe un hook equivalente, instalar `deploy/certbot-reload.sh` como `/etc/letsencrypt/renewal-hooks/deploy/50-icm-website-reload`, propiedad de root y modo 750. Solo recarga Nginx cuando se renueva este certificado y valida primero su configuración. Ejecutar `certbot renew --cert-name importcorporalmedical.com --dry-run --run-deploy-hooks --no-random-sleep-on-renew`. La ruta ACME permanece disponible en la configuración final. La prueba usa el entorno de ensayo de Let's Encrypt y no reemplaza el certificado público.
 
 No se garantiza publicación sin interrupción con este procedimiento HTTP-01. Si se necesita conservar un sitio anterior sin esa ventana, preparar primero un certificado DNS-01 con acceso al DNS y coordinar el corte. No activar HSTS con subdominios sin revisar los demás servicios.
 
