@@ -1,5 +1,6 @@
 "use server";
 import { headers } from "next/headers";
+import { isIP } from "node:net";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
@@ -9,6 +10,7 @@ import { checkPassword, createSession, destroySession, requireAdmin } from "@/li
 import { removeIfUnused, saveUpload } from "@/lib/uploads";
 import { slugify } from "@/lib/slug";
 import { emptyProductDetails, readProductDetails, type ProductDetails } from "@/lib/product-details";
+import { verifyLoginChallenge } from "@/lib/turnstile";
 
 export type FormState = { error?: string; ok?: string } | undefined;
 
@@ -22,6 +24,9 @@ export async function login(_: FormState, fd: FormData): Promise<FormState> {
   const now = Date.now();
   const a = attempts.get(ip);
   if (a && a.until > now && a.n >= 8) return { error: "Demasiados intentos. Espera unos minutos." };
+  if (!await verifyLoginChallenge(fd.get("cf-turnstile-response"), isIP(ip) ? ip : undefined)) {
+    return { error: "No se pudo completar la verificación de seguridad. Inténtalo de nuevo." };
+  }
   if (!checkPassword(String(fd.get("password") ?? ""))) {
     const cur = a && a.until > now ? a : { n: 0, until: now + 15 * 60_000 };
     attempts.set(ip, { ...cur, n: cur.n + 1 });

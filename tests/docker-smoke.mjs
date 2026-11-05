@@ -24,7 +24,7 @@ function exec(js) { return compose('exec', '-T', 'web', 'node', '-e', js); }
 const build = JSON.parse(docker(['run', '--rm', '--network', 'none', image, 'cat', 'build-info.json']));
 assert.equal(build.public.STORAGE_DRIVER, 'local', 'Esta prueba nunca utiliza credenciales R2.');
 if (process.argv[3]) docker(['image', 'inspect', process.argv[3]]);
-fs.writeFileSync(envFile, Object.entries({ ...build.public, ADMIN_PASSWORD: crypto.randomBytes(20).toString('hex'), SESSION_SECRET: crypto.randomBytes(32).toString('hex'), ALLOW_CATALOG_INITIALIZATION: 'true' }).map(([key, value]) => `${key}=${value}`).join('\n'));
+fs.writeFileSync(envFile, Object.entries({ ...build.public, ADMIN_PASSWORD: crypto.randomBytes(20).toString('hex'), SESSION_SECRET: crypto.randomBytes(32).toString('hex'), TURNSTILE_SITE_KEY: 'local-smoke-site-key', TURNSTILE_SECRET_KEY: 'local-smoke-secret-key', ALLOW_CATALOG_INITIALIZATION: 'true' }).map(([key, value]) => `${key}=${value}`).join('\n'));
 Object.assign(env, build.public);
 async function health() {
   const result = JSON.parse(exec("fetch('http://127.0.0.1:3000/api/health').then(async r=>console.log(JSON.stringify({code:r.status,cache:r.headers.get('cache-control'),...await r.json()})))"));

@@ -2,7 +2,7 @@
   "title": "Política de Privacidad y Protección de Datos Personales",
   "navTitle": "Política de privacidad",
   "path": "/politica-de-privacidad",
-  "updated": "3 de noviembre de 2026",
+  "updated": "5 de noviembre de 2026",
   "intro": [],
   "sections": [
     {
@@ -66,7 +66,8 @@
       "title": "8. Transferencias y transmisiones a terceros",
       "paragraphs": [
         "Podemos compartir datos con encargados que prestan servicios necesarios para el alojamiento, mensajería, logística y soporte de nuestras relaciones comerciales, bajo las condiciones de confidencialidad y seguridad aplicables.",
-        "Al utilizar los enlaces a WhatsApp, usted accede a un servicio externo sujeto a las políticas de su proveedor. Los mensajes preparados en el formulario no se envían automáticamente. El sitio también carga tipografías desde Google Fonts; al solicitarlas, el navegador se comunica con ese proveedor y puede transmitir datos técnicos, como la dirección IP.",
+        "Al utilizar los enlaces a WhatsApp, usted accede a un servicio externo sujeto a las políticas de su proveedor. Los mensajes preparados en el formulario no se envían automáticamente. Las tipografías se sirven desde el propio sitio.",
+        "El acceso al panel administrativo utiliza Cloudflare Turnstile para detectar intentos automatizados. Al cargar la verificación, el navegador se comunica con Cloudflare, que puede tratar datos técnicos del dispositivo y la conexión, como la dirección IP. Esta verificación se carga en la pantalla de inicio de sesión administrativo.",
         "Algunos proveedores pueden estar ubicados fuera de Colombia. Cuando corresponda una transferencia o transmisión de datos a cargo del Responsable, se aplicarán las salvaguardas exigidas por la legislación colombiana."
       ]
     },

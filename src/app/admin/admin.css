@@ -77,6 +77,9 @@ button.adm-pill { cursor: pointer; }
 /* Forms */
 .adm-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 26px; }
 .adm-form { display: grid; gap: 16px; }
+.adm-challenge { min-width: 0; }
+.adm-challenge p { font-size: 13px; margin: 8px 0 0; }
+.adm-challenge-retry { margin-top: 8px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; background: #fff; color: var(--violet); cursor: pointer; font: inherit; }
 .adm-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; }
 .adm-col { display: grid; gap: 16px; align-content: start; }
 .adm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }

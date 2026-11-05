@@ -174,6 +174,16 @@ Referencias: [noindex](https://developers.google.com/search/docs/crawling-indexi
 
 ## Accesibilidad y recuperación de errores
 
+### Protección del acceso administrativo
+
+El login utiliza Cloudflare Turnstile en modo Managed. Define `TURNSTILE_SITE_KEY` y `TURNSTILE_SECRET_KEY` en `deploy/production.env`; la clave privada nunca se envía al navegador ni se incorpora a la imagen. La clave pública se entrega desde la página dinámica únicamente al formulario administrativo. No se carga el script en el catálogo ni en el formulario de WhatsApp.
+
+El servidor verifica cada token mediante Siteverify, exige el hostname de `SITE_URL` y la acción `admin_login`, y solo entonces comprueba la contraseña. Tokens ausentes, inválidos, caducados, reutilizados o errores del servicio rechazan el acceso. Se mantiene el límite de ocho contraseñas incorrectas por IP en quince minutos. Tras un intento, el widget se vuelve a crear para obtener un token nuevo; también se gestionan expiración y errores de carga.
+
+Producción exige ambas claves al arrancar y rechaza las claves oficiales de prueba. En desarrollo, únicamente cuando no se configura ninguna de las dos claves, se omite Turnstile. No hay una variable para omitirlo en producción. Para desarrollar con desafíos usa un widget separado que autorice el hostname local. Cambiar las claves requiere recrear el contenedor, sin recompilar. Las sesiones administrativas existentes siguen vigentes hasta cerrar sesión o caducar.
+
+Documentación: [validación del servidor](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/).
+
 - El primer enlace permite saltar al contenido principal, tanto en el sitio como en administración. El destino admite foco sin añadir una parada adicional al recorrido normal de Tab.
 - El carrusel tiene pausa/reanudación explícita. Entrar con teclado lo detiene hasta una reanudación voluntaria; también se suspende fuera de pantalla, al ocultar la pestaña y durante el uso del ratón sobre el carrusel. Las diapositivas inactivas siguen siendo inertes. La preferencia del sistema de movimiento reducido desactiva la reproducción automática y se atiende si cambia durante la visita.
 - La franja de palabras conserva su desplazamiento y dispone de pausa/reanudación. Se detiene fuera de pantalla, en pestañas ocultas y con movimiento reducido.
