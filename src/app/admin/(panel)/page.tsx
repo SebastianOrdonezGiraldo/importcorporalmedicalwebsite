@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
-export default function AdminHome() {
+import { requireAdmin } from "@/lib/auth";
+export default async function AdminHome() {
+  await requireAdmin();
   redirect("/admin/productos");
 }

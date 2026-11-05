@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
+import { requireAdmin } from "@/lib/auth";
 import { getProduct, listCategories } from "@/lib/db";
 import { mediaUrl } from "@/lib/site";
 import ProductForm from "../../../ui/ProductForm";
 
 export default async function EditProduct({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdmin();
   const p = getProduct({ id: Number((await params).id) });
   if (!p) notFound();
   const categories = listCategories({ includeHidden: true }).map(({ id, name, visible }) => ({ id, name, visible }));

@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth";
 import { listCategories, listProducts } from "@/lib/db";
 import { mediaUrl } from "@/lib/site";
 import { getProductPublicationState, isProductPublished } from "@/lib/product-visibility";
@@ -8,6 +9,7 @@ import Flash from "../../ui/Flash";
 type Props = { searchParams: Promise<{ q?: string; linea?: string; ok?: string }> };
 
 export default async function ProductsAdmin({ searchParams }: Props) {
+  await requireAdmin();
   const sp = await searchParams;
   const q = String(sp.q ?? "").trim().slice(0, 80);
   const categories = listCategories({ includeHidden: true });

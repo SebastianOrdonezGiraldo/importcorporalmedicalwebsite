@@ -337,6 +337,7 @@ test('admin line list offers public links only for visible categories', async t 
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
   }).outputText;
   vm.runInNewContext(compiled, { module, exports: module.exports, require: name => {
+    if (name === '@/lib/auth') return { requireAdmin: async () => {} };
     if (name === '@/lib/db') return api;
     if (name === '@/lib/site') return { mediaUrl: file => '/media/' + file };
     if (name === '../../actions') return { deleteCategoryAction: () => {} };

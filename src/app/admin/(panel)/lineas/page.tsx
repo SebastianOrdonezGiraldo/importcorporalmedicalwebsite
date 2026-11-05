@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth";
 import { listCategories } from "@/lib/db";
 import { mediaUrl } from "@/lib/site";
 import { deleteCategoryAction } from "../../actions";
@@ -5,6 +6,7 @@ import ConfirmSubmit from "../../ui/ConfirmSubmit";
 import Flash from "../../ui/Flash";
 
 export default async function LinesAdmin({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
+  await requireAdmin();
   const { ok } = await searchParams;
   const cats = listCategories({ includeHidden: true });
   return (

@@ -1,7 +1,9 @@
+import { requireAdmin } from "@/lib/auth";
 import { listCategories } from "@/lib/db";
 import ProductForm from "../../../ui/ProductForm";
 
-export default function NewProduct() {
+export default async function NewProduct() {
+  await requireAdmin();
   const categories = listCategories({ includeHidden: true }).map(({ id, name, visible }) => ({ id, name, visible }));
   return (
     <>
