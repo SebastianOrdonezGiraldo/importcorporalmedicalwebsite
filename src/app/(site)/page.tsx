@@ -202,34 +202,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="band" style={{ paddingBottom: 0 }} id="bienvenida">
-        <div className="wrap">
-          <div className="offer">
-            <div className="rv l">
-              <span className="kicker">Nuevos distribuidores</span>
-              <h2>Kit de bienvenida + envío gratis</h2>
-              <p>Regístrate antes del 30 de noviembre.</p>
-              <div className="cta-row">
-                <a className="btn btn-green" href="#registro">Lo quiero</a>
-                <a className="btn btn-outline" href={waUrl("Hola, quiero información sobre el kit de bienvenida para distribuidores.")} target="_blank" rel="noopener">Preguntar</a>
-              </div>
-            </div>
-            <div className="offer-side rv r">
-              <div className="countdown" id="countdown" data-end={SITE.offerEndsUtc} aria-label="Tiempo restante de la promoción">
-                <div><b data-u="d">--</b><small>días</small></div>
-                <div><b data-u="h">--</b><small>horas</small></div>
-                <div><b data-u="m">--</b><small>min</small></div>
-              </div>
-              <ul>
-                <li><Check w={3.4} />Material POP</li>
-                <li><Check w={3.4} />Envío gratis del primer pedido</li>
-                <li><Check w={3.4} />Capacitación virtual</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="band" id="cobertura">
         <div className="wrap coverage">
           <div>
@@ -311,7 +283,6 @@ const FAQ = [
 const BENEFITS = [
   { t: "Precio distribuidor", p: "Mejor precio por volumen.", icon: <><path pathLength={1} d="M3 17 9 11l4 4 8-8" /><path pathLength={1} d="M15 7h6v6" /></> },
   { t: "Documentación INVIMA", p: "Lista para IPS y clínicas.", icon: <><path pathLength={1} d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6l-8-3Z" /><path pathLength={1} d="m9 12 2 2 4-4" /></> },
-  { t: "Kit de marketing", p: "Fotos, videos y catálogo.", icon: <><rect pathLength={1} x="3" y="4" width="18" height="14" rx="2" /><path pathLength={1} d="m10 9 5 2.5-5 2.5z" /><path pathLength={1} d="M8 21h8" /></> },
   { t: "Capacitación", p: "Para ti y tu equipo.", icon: <><path pathLength={1} d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2Z" /><path pathLength={1} d="M8 7h6M8 11h6" /></> },
   { t: "Servicio técnico", p: "Garantía y reparación.", icon: <path pathLength={1} d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8-3-3 1.3-1.3a4 4 0 0 0-5-5L5 13 3 11l8-8 2 2Z" /> },
   { t: "Recompra", p: "Consumibles que vuelven cada mes.", icon: <><path pathLength={1} d="M20 12a8 8 0 1 1-2.3-5.6" /><path pathLength={1} d="M20 4v5h-5" /></> },

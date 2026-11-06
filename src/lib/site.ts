@@ -21,8 +21,6 @@ export const SITE = {
   whatsapp: "573212591209",
   phoneLabel: "321 259 1209",
   email: "info@importcorporalmedical.com",
-  /** Fin de la promoción de bienvenida: 30 nov 2026, 23:59 hora Colombia (UTC-5). */
-  offerEndsUtc: Date.UTC(2026, 11, 1, 4, 59, 0),
 };
 
 export const ADVISORS = [

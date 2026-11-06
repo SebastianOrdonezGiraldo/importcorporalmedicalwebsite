@@ -227,24 +227,6 @@ nav.main .btn { margin-left: 8px; padding: 12px 18px; font-size: 14px; }
 .steps b { display: block; font: 800 18px var(--font-display); margin-top: 4px; }
 .steps span { color: var(--muted); font-size: 14.5px; }
 
-/* Offer */
-.offer { border-radius: 24px; color: #fff; padding: 44px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: center; position: relative; overflow: hidden; background: linear-gradient(120deg, var(--magenta), var(--violet), var(--violet-deep), var(--magenta)); background-size: 300% 300%;  }
-.offer::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.12) 1.5px, transparent 1.5px); background-size: 22px 22px; pointer-events: none;  }
-.offer > * { position: relative; z-index: 1; }
-.offer .kicker { color: var(--green); }
-.offer h2 { font-size: clamp(30px, 3.8vw, 46px); font-weight: 900; margin-top: 12px; }
-.offer p { margin-top: 10px; font-size: 17px; opacity: .92; }
-.offer .cta-row { margin-top: 24px; }
-.offer .btn-outline { color: #fff; }
-.offer-side { display: grid; gap: 16px; justify-items: start; }
-.countdown { display: flex; gap: 10px; }
-.countdown div { background: #fff; color: var(--violet-deep); border-radius: 14px; padding: 12px 14px; min-width: 76px; text-align: center; box-shadow: 0 12px 24px -14px rgba(0,0,0,.5); }
-.countdown b { display: block; font: 900 32px/1 var(--font-display); font-variant-numeric: tabular-nums; }
-.countdown small { font: 700 11px var(--font-body); text-transform: uppercase; letter-spacing: .08em; }
-.offer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.offer li { display: flex; gap: 10px; align-items: center; font-weight: 700; }
-.offer li svg { width: 20px; height: 20px; color: var(--violet); flex: none; background: var(--green); border-radius: 50%; padding: 3px; }
-
 /* Coverage */
 .coverage { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
 .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
@@ -388,7 +370,7 @@ footer a:hover { color: var(--violet); translate: 3px 0; }
   .hero-ctrl { bottom: 94px; }
   .hero-dots { left: max(16px, env(safe-area-inset-left, 0px)); transform: none; bottom: 154px; }
   .values .grid { grid-template-columns: 1fr; }
-  .about, .brands-grid, .program, .coverage, .contact-grid, .offer { grid-template-columns: 1fr; }
+  .about, .brands-grid, .program, .coverage, .contact-grid { grid-template-columns: 1fr; }
   .about { gap: 40px; }
   .foot-top { grid-template-columns: 1fr 1fr; }
   .wa-float .bubble-txt { display: none; }
@@ -400,7 +382,6 @@ footer a:hover { color: var(--violet); translate: 3px 0; }
   .lines, .benefits, .brand-list { grid-template-columns: 1fr; }
   .counters { grid-template-columns: 1fr; padding: 30px 24px; }
   form.apply { grid-template-columns: 1fr; padding: 22px; }
-  .offer { padding: 30px 22px; }
   .foot-top { grid-template-columns: 1fr; }
   .brand-word strong { font-size: 21px; }
   .outline { -webkit-text-stroke-width: 1.5px; }
