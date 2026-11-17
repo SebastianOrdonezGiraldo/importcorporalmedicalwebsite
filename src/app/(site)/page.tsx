@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Fragment, type CSSProperties } from "react";
 import { countPublicProducts, listCategories } from "@/lib/db";
-import { ADVISORS, BRANDS, HERO_SLIDES, KEYWORDS, REGIONS, SITE, mediaUrl, waUrl, assetUrl } from "@/lib/site";
+import { ADVISOR, BRANDS, HERO_SLIDES, KEYWORDS, REGIONS, SITE, mediaUrl, waUrl, assetUrl } from "@/lib/site";
 import { ArrowRight, Check, Mail, WhatsApp } from "@/components/Icons";
 import HomeEffects from "./HomeEffects";
 import ApplyForm from "./ApplyForm";
@@ -229,14 +229,12 @@ export default function HomePage() {
             <ApplyForm lines={lines.map((l) => ({ name: l.name, img: mediaUrl(l.image) }))} />
             <div className="info-card rv r">
               <h3>Atención a distribuidores</h3>
-              <p className="pick">Elige con quién quieres hablar</p>
-              {ADVISORS.map((a) => (
-                <a key={a.name} className="advisor" href={waUrl(`Hola ${a.first}, quiero información para ser distribuidor de Import Corporal Medical.`, a.phone)} target="_blank" rel="noopener">
-                  <span className="avatar">{a.initials}</span>
-                  <span className="who-a"><b>{a.name}</b><small>{a.role}</small></span>
-                  <span className="wa-pill"><WhatsApp />WhatsApp</span>
-                </a>
-              ))}
+              <p className="pick">Habla con nuestro asesor</p>
+              <a className="advisor" href={waUrl("Hola, quiero información para ser distribuidor de Import Corporal Medical.", ADVISOR.phone)} target="_blank" rel="noopener">
+                <span className="avatar">{ADVISOR.initials}</span>
+                <span className="who-a"><b>{ADVISOR.name}</b><small>{ADVISOR.phoneLabel}</small></span>
+                <span className="wa-pill"><WhatsApp />WhatsApp</span>
+              </a>
               <div className="mail-row">
                 <a className="mail-cta" href={`mailto:${SITE.email}?subject=Quiero%20ser%20distribuidor`}>
                   <Mail />
