@@ -18,17 +18,12 @@ export const SITE = {
   description:
     "Equipos de fisioterapia y rehabilitación en Colombia. Explora el catálogo y consulta precios y disponibilidad por WhatsApp.",
   url: siteUrl(),
-  whatsapp: "573212591209",
-  phoneLabel: "321 259 1209",
+  whatsapp: "573173676720",
+  phoneLabel: "317 367 6720",
   email: "info@importcorporalmedical.com",
-  /** Fin de la promoción de bienvenida: 30 nov 2026, 23:59 hora Colombia (UTC-5). */
-  offerEndsUtc: Date.UTC(2026, 11, 1, 4, 59, 0),
 };
 
-export const ADVISORS = [
-  { initials: "JS", name: "Juan Sebastián Lombana", role: "Asesor comercial", phone: "573212591209", first: "Juan Sebastián" },
-  { initials: "SL", name: "Stefania López", role: "Asesora comercial", phone: "573117479607", first: "Stefania" },
-];
+export const ADVISOR = { initials: "AC", name: "Asesor comercial", phoneLabel: "+57 317 3676720", phone: "573173676720" };
 
 export const BRANDS = [
   { name: "I-Tech", c: "#b4377e" }, { name: "Compass Health", c: "#4f7f1f" },

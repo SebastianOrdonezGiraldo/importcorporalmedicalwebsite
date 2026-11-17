@@ -47,6 +47,12 @@ try {
     assert.equal(response.status, 200, url);
     await response.arrayBuffer();
   }
+  // Missing records need a real status; streaming would turn these into soft 404s.
+  for (const url of ['/producto/no-existe-prueba', '/catalogo/no-existe-prueba']) {
+    const response = await fetch(`http://127.0.0.1:3289${url}`);
+    assert.equal(response.status, 404, url);
+    await response.arrayBuffer();
+  }
   exec("const d=new(require('node:sqlite').DatabaseSync)('/app/data/app.db');d.exec(\"PRAGMA busy_timeout=5000; UPDATE products SET summary='PERSISTENCE_SMOKE_MARKER' WHERE id=(SELECT MIN(id) FROM products)\");d.close()");
   fs.writeFileSync(envFile, fs.readFileSync(envFile, 'utf8').replace('ALLOW_CATALOG_INITIALIZATION=true', 'ALLOW_CATALOG_INITIALIZATION=false'));
   compose('up', '-d', '--no-build', '--force-recreate', '--wait', '--wait-timeout', '120', 'web');

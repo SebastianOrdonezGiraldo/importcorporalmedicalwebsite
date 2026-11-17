@@ -4,11 +4,10 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { resolveProductSlug, listProducts } from "@/lib/db";
 import { withSearchParams, type PageSearchParams } from "@/lib/redirect-url";
 import { isProductPublished } from "@/lib/product-visibility";
-import { ADVISORS, mediaUrl, waUrl } from "@/lib/site";
-import ProductAdvisorContact from "@/components/ProductAdvisorContact";
+import { ADVISOR, mediaUrl, waUrl } from "@/lib/site";
 import ProductCard from "@/components/ProductCard";
 import { pageMetadata, absoluteUrl, breadcrumbData, jsonLd } from "@/lib/seo";
-import { ArrowRight, Check } from "@/components/Icons";
+import { ArrowRight, Check, WhatsApp } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
@@ -74,10 +73,9 @@ export default async function ProductPage({ params, searchParams }: Props) {
                 <li><Check />Precio especial para distribuidores</li>
               </ul>
               <div className="cta-row">
-                <ProductAdvisorContact productName={p.name} advisors={ADVISORS.map((advisor) => ({
-                  name: advisor.name, role: advisor.role, initials: advisor.initials,
-                  href: waUrl(`Hola ${advisor.first}, quiero información sobre el producto "${p.name}" (${productUrl}).`, advisor.phone),
-                }))} />
+                <a className="btn btn-violet" href={waUrl(`Hola, quiero información sobre el producto "${p.name}" (${productUrl}).`, ADVISOR.phone)} target="_blank" rel="noopener">
+                  <WhatsApp />Consultar por WhatsApp
+                </a>
                 <Link className="btn btn-outline" style={{ color: "var(--violet)" }} href="/#registro">Quiero ser distribuidor <ArrowRight /></Link>
               </div>
               <p className="pdetail-note">Producto informativo. Pide precios y disponibilidad a un asesor.</p>

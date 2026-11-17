@@ -4,7 +4,7 @@ import { REGIONS } from "@/lib/site";
 
 /**
  * Interactive behaviour of the home page, ported from the original single-file site:
- * hero slider, counters, brand highlight, coverage hub, offer countdown,
+ * hero slider, counters, brand highlight, coverage hub,
  * copy-to-clipboard.
  */
 export default function HomeEffects() {
@@ -198,23 +198,6 @@ export default function HomeEffects() {
         e.preventDefault(); activateNode(e.target);
       });
       select(0);
-    }
-
-    /* Welcome offer countdown */
-    {
-      const el = document.getElementById("countdown")!;
-      const end = Number(el.dataset.end);
-      const set = (u: string, val: number) => {
-        const b = el.querySelector(`[data-u="${u}"]`)!, s = String(val).padStart(2, "0");
-        if (b.textContent !== s) b.textContent = s;
-      };
-      const tick = () => {
-        const ms = Math.max(0, end - Date.now());
-        set("d", Math.floor(ms / 864e5)); set("h", Math.floor(ms / 36e5) % 24); set("m", Math.floor(ms / 6e4) % 60);
-      };
-      tick();
-      const t = setInterval(tick, 15000);
-      cleanups.push(() => clearInterval(t));
     }
 
     /* Copy buttons */
