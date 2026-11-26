@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { legalDocuments, type LegalDocumentContent } from "@/lib/legal";
 
 function linkedText(text: string): ReactNode {
-  return text.split(/(Política de Cambios, Devoluciones, Derecho de Retracto y Garantías|Política de Privacidad(?: y Protección de Datos(?: Personales)?)?|Política de Cookies|Términos y Condiciones|[\w.+-]+@[\w.-]+\.[a-z]{2,}|\+57 321 238 7916)/gi).map((part, i) => {
+  return text.split(/(Política de Cambios, Devoluciones, Derecho de Retracto y Garantías|Política de Privacidad(?: y Protección de Datos(?: Personales)?)?|Política de Cookies|Términos y Condiciones|[\w.+-]+@[\w.-]+\.[a-z]{2,}|\+57 317 3676720)/gi).map((part, i) => {
     const lower = part.toLowerCase();
     let href: string | undefined;
     if (lower.startsWith("política de cambios")) href = legalDocuments.returns.path;
@@ -10,7 +10,7 @@ function linkedText(text: string): ReactNode {
     else if (lower === "política de cookies") href = `${legalDocuments.privacy.path}#seccion-9`;
     else if (lower === "términos y condiciones") href = legalDocuments.terms.path;
     else if (/^[\w.+-]+@[\w.-]+\.[a-z]{2,}$/i.test(part)) href = `mailto:${part}`;
-    else if (part === "+57 321 238 7916") href = "tel:+573212387916";
+    else if (part === "+57 317 3676720") href = "tel:+573173676720";
     return href ? <a key={i} href={href}>{part}</a> : part;
   });
 }
